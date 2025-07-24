@@ -105,6 +105,6 @@ gopass -config /path/to/another.dat
 ## License
 MIT © prozod 2025
 
-<img alt="gopass-ss1" src="/assets/ss1.png" height="400" width="auto">
+<img alt="gopass-ss1" src="/assets/ss1.png" height="500" width="auto">
 <img alt="gopass-ss2" src="/assets/ss2.png" height="400" width="auto">
 <img alt="gopass-ss3" src="/assets/ss3.png" height="400" width="auto">
