@@ -38,7 +38,7 @@ func deriveKey(password, salt []byte) ([]byte, error) {
 	return key, nil
 }
 
-func Load(filepath string) (*Vault, error) {
+func LoadWithReader(filepath string, reader PasswordReader) (*Vault, error) {
 	data, err := os.ReadFile(filepath)
 	keyID := "vault:" + filepath
 	var password string
@@ -46,8 +46,7 @@ func Load(filepath string) (*Vault, error) {
 	if err != nil {
 		if os.IsNotExist(err) {
 			fmt.Println(common.Blue + "Vault file not found. Creating new vault." + common.Reset)
-			fmt.Print(common.Green + "Enter password for new vault: " + common.Reset)
-			passBytes, err := term.ReadPassword(int(os.Stdin.Fd()))
+			passBytes, err := reader.Read(common.Green + "Enter password for new vault: " + common.Reset)
 			fmt.Println()
 			if err != nil {
 				return nil, fmt.Errorf("failed to read password: %v", err)
@@ -124,6 +123,10 @@ tryDecrypt:
 	}
 
 	return &v, nil
+}
+
+func Load(filepath string) (*Vault, error) {
+	return LoadWithReader(filepath, TerminalPasswordReader{})
 }
 
 func (v *Vault) Save(filepath string) error {
@@ -211,16 +214,16 @@ func SaveVaultAccessToConfig(vaultPath string) error {
 	return nil
 }
 
-func GetVaultPathFromConfig() []string {
+func GetVaultPathFromConfig() (string, error) {
 	usr, err := user.Current()
 	if err != nil {
-		return []string{}
+		return "", fmt.Errorf("cannot get current user from system")
 	}
 
 	configPath := filepath.Join(usr.HomeDir, ".gopassrc")
 	file, err := os.Open(configPath)
 	if err != nil {
-		return []string{}
+		return "", fmt.Errorf("cannot open .gopassrc")
 	}
 	defer file.Close()
 
@@ -229,11 +232,11 @@ func GetVaultPathFromConfig() []string {
 		line := strings.TrimSpace(scanner.Text())
 		if after, ok := strings.CutPrefix(line, "vault="); ok {
 			path := after
-			return []string{path}
+			return string(path), nil
 		}
 	}
 
-	return []string{}
+	return "", fmt.Errorf("cannot get vault path from .gopassrc")
 }
 
 /* reset keyring on each vault change */
@@ -242,7 +245,7 @@ func GetLastVaultFilePath() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	data, err := os.ReadFile(filepath.Join(usr.HomeDir, ".gopass_last_vault"))
+	data, err := os.ReadFile(filepath.Join(usr.HomeDir, ".gopassrc_previous"))
 	if err != nil {
 		return "", err
 	}
@@ -254,7 +257,7 @@ func SetLastVaultFilePath(vaultPath string) error {
 	if err != nil {
 		return err
 	}
-	return os.WriteFile(filepath.Join(usr.HomeDir, ".gopass_last_vault"), []byte(vaultPath), 0o600)
+	return os.WriteFile(filepath.Join(usr.HomeDir, ".gopassrc_previous"), []byte(vaultPath), 0o600)
 }
 
 func ClearOldVaultPasswordIfNeeded(oldVault, newVault string) error {

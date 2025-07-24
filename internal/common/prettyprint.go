@@ -1,3 +1,4 @@
+// Package common contains shared constants, utility functions and helpers used across the gopass application.
 package common
 
 import "fmt"
@@ -20,10 +21,11 @@ func PrintHelp() {
 	fmt.Printf(Bold + `Usage:` + Reset + "\n")
 	fmt.Println(`  ` + Green + `gopass add <name> <password>` + Reset + ` — Add a new secret`)
 	fmt.Println(`  ` + Blue + `gopass get <name>` + Reset + ` — Retrieve a password, copied to clipboard automatically.`)
-	fmt.Println(`  ` + Yellow + `gopass list` + Reset + ` — List all stored secret names`)
-	fmt.Println(`  ` + Purple + `gopass export <filename> (ex: mydata)` + Reset + ` — Export secrets to JSON`)
+	fmt.Println(`  ` + Yellow + `gopass list` + Reset + ` — List all stored secret names (use flag '-expose' to display secrets)`)
+	fmt.Println(`  ` + Purple + `gopass export <filename> (ex: mydata.json)` + Reset + ` — Export secrets to JSON`)
 	fmt.Println(`  ` + Red + `gopass import <filepath> (ex: mydata.json)` + Reset + ` — Import secrets from JSON`)
 	fmt.Println(`  ` + Cyan + `gopass -config <absolute filepath> (ex: ~/myvault.dat)` + Reset + ` — Import secrets from JSON`)
+	fmt.Println(`  ` + Yellow + `gopass vault` + Reset + ` — Display current loaded vault`)
 	fmt.Println()
 	fmt.Println(Bold + `Current vault is cached and saved in a local config file (~/.gopassrc).` + Reset)
 }

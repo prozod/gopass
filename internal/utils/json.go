@@ -1,3 +1,4 @@
+// Package utils provides utility interfaces and helper functions, such as import/export interfaces for JSON handling
 package utils
 
 import "github.com/prozod/gopass/internal/vault"
