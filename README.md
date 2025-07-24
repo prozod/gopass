@@ -62,6 +62,12 @@ gopass add <key> <value>
 > Add a new key–value pair to the vault
 
 ```bash
+gopass remove <key> 
+```
+> Remove an existing key (Vaults cannot contain duplicate keys)
+> IMPORTANT: When importing from other vaults, existing/duplicate keys WILL BE skipped.
+
+```bash
 gopass get <key>
 ```
 > Retrieve a stored value by key, the value is copied to clipboard automatically.
